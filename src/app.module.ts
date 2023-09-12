@@ -20,6 +20,7 @@ import { SoVienPhi } from './SoVienPhi/SoVienPhi.entity';
       entities: [Photo, SoVienPhi],
       extra: {
         trustServerCertificate: true,
+        encrypt: false,
       },
     }),
   ],
