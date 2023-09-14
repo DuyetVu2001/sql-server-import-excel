@@ -15,6 +15,7 @@ import { SoVienPhi } from './SoVienPhi/SoVienPhi.entity';
       username: 'sa',
       database: 'test',
       autoLoadEntities: true,
+      // TODO: -D disable when up code
       synchronize: true,
       logging: true,
       entities: [Photo, SoVienPhi],
@@ -23,6 +24,7 @@ import { SoVienPhi } from './SoVienPhi/SoVienPhi.entity';
         encrypt: false,
       },
     }),
+    TypeOrmModule.forFeature([SoVienPhi]),
   ],
   controllers: [AppController],
   providers: [AppService],

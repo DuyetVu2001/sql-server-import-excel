@@ -3,6 +3,9 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 @Entity({ name: 'So_Vien_Phi' }) // Replace 'YourTableName' with the actual table name
 export class SoVienPhi {
   @PrimaryGeneratedColumn('uuid')
+  ID: string;
+
+  @Column({ length: 255, nullable: true })
   MaPhieu: string;
 
   @Column({ length: 20, nullable: true })

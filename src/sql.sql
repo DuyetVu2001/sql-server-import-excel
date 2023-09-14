@@ -29,4 +29,22 @@ CREATE TABLE "So_Vien_Phi" (
   "uutien" smallint,
   "Chandoan" nvarchar(500),
   CONSTRAINT "PK_d99ea3053e4b8337a1a2aca4f6d" PRIMARY KEY ("MaPhieu")
-)
+);
+
+declare @p27 varchar(30)
+set
+  @p27 = 'VP2308290005' exec usp_So_VienPhi_INSERT @TENPHIEU = N'VP',
+  @NGAY = '2023-08-09 20:30:02.323',
+  @MABN = N'BSGD.23002136',
+  @LOAI = N'2',
+  @MaNV = N'thungan9',
+  @NGUOITHU = N'Hoàng Bình Minh',
+  @TONGTIEN = N'50000',
+  @HUY = N'0',
+  @HANBHYT = '1900-01-01 00:00:00',
+  @SOBHYT = N'',
+  @NOIDANGKYKHAM = N'',
+  @CONLAI = N'50000',
+  @LOAITHANHTOAN = N'TT',
+  @CHANDOAN = N'',
+  @MADVS = N'SH015',
