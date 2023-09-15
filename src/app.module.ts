@@ -16,7 +16,7 @@ import { SoVienPhi } from './SoVienPhi/SoVienPhi.entity';
       database: 'test',
       autoLoadEntities: true,
       // TODO: -D disable when up code
-      synchronize: true,
+      synchronize: false,
       logging: true,
       entities: [Photo, SoVienPhi],
       extra: {
