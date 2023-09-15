@@ -4,6 +4,8 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
+  Render,
+  Req,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { FileInterceptor } from './file.interceptor';
@@ -12,9 +14,10 @@ import { FileInterceptor } from './file.interceptor';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('upload')
+  @Render('index')
+  uploadPage(@Req() req) {
+    return {};
   }
 
   @Get('get-all')
@@ -22,8 +25,8 @@ export class AppController {
     return this.appService.getAll();
   }
 
-  @Post('excel')
-  @UseInterceptors(new FileInterceptor('fileT'))
+  @Post('excel/upload')
+  @UseInterceptors(new FileInterceptor('fileExcel'))
   async uploadExcel(@UploadedFile() file) {
     return this.appService.saveExcelData(file.path);
   }

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Photo } from './test.entity';
 import { SoVienPhi } from './SoVienPhi/SoVienPhi.entity';
 
 @Module({
@@ -15,10 +14,9 @@ import { SoVienPhi } from './SoVienPhi/SoVienPhi.entity';
       username: 'sa',
       database: 'test',
       autoLoadEntities: true,
-      // TODO: -D disable when up code
       synchronize: false,
       logging: true,
-      entities: [Photo, SoVienPhi],
+      entities: [SoVienPhi],
       extra: {
         trustServerCertificate: true,
         encrypt: false,
