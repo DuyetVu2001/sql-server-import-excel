@@ -8,6 +8,11 @@ const ExcelJS = require('exceljs');
 const fs = require('fs');
 const path = require('path');
 
+type ErrorData = {
+  name: string;
+  description: string;
+};
+
 @Injectable()
 export class AppService {
   constructor(
@@ -23,9 +28,12 @@ export class AppService {
     return this.soVienPhiRepo.find();
   }
 
-  async saveExcelData(filePath: string) {
+  async saveExcelDataV2(filePath: string) {
     try {
       const data = await readExcelFile(filePath);
+      let isShowErrorLink = false;
+      const errorData: ErrorData[] = [];
+
       console.log('----------da------------------', data?.length);
 
       //  {
@@ -59,6 +67,13 @@ export class AppService {
           if (!queryService || queryService?.length == 0) {
             // không thấy dịch vụ thì chạy vòng tiếp theo
             //   await this.saveFileErr([], 'null')
+
+            errorData.push({
+              name: mappingData?.col1,
+              description: 'không thấy dịch vụ',
+            });
+
+            isShowErrorLink = true;
             continue;
           }
           console.log('-----------vao---------------', mappingData);
@@ -104,6 +119,14 @@ export class AppService {
           } catch (e) {
             console.log(e?.message);
             // tạo lỗi thì chạy vòng lặp tiếp theo
+
+            errorData.push({
+              name: mappingData?.col1,
+              description: e?.message,
+            });
+
+            isShowErrorLink = true;
+
             continue;
           }
 
@@ -178,20 +201,36 @@ export class AppService {
           } catch (e) {
             console.log(e?.message);
             // không tạo phiếu thì chạy vòng tiếp theo
+
+            errorData.push({
+              name: mappingData?.col1,
+              description: e?.message,
+            });
+
+            isShowErrorLink = true;
+
             continue;
           }
         }
       }
+
+      if (isShowErrorLink) {
+        await this.saveFileErr(errorData, 'null');
+
+        return {
+          errorLink: '/output.xlsx',
+        };
+      }
+
       console.log('---------------count-------------------------', count);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async saveFileErr(data: any, err: any) {
+  async saveFileErr(data: ErrorData[], err: any) {
     // Đường dẫn đến file mẫu trong thư mục public
-    const templatePath = path.join(__dirname, 'public', 'file-template.xlsx');
-    console.log('-------------templatePath-----------------', templatePath);
+    const templatePath = path.join('public/output.xlsx');
 
     // Tạo một workbook mới
     const workbook = new ExcelJS.Workbook();
@@ -215,7 +254,7 @@ export class AppService {
         });
 
         // Ghi workbook ra file
-        const outputFilePath = path.join(__dirname, 'public', 'output.xlsx');
+        const outputFilePath = path.join('public/output.xlsx');
         return workbook.xlsx.writeFile(outputFilePath);
       })
       .then(() => {

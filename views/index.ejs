@@ -16,6 +16,7 @@
 
     <div id="success-message" class="alert alert-success" style="display: none;"></div>
     <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+    <div id="error-file" class="alert alert-danger" style="display: none;"><a href="">Bản ghi lỗi</a></div>
 
     <div class="card">
       <div class="card-header">
@@ -51,10 +52,12 @@
       var formLoading = document.getElementById('form-loading');
 
       var errorMessageElement = document.getElementById('error-message');
+      var errorFileElement = document.getElementById('error-file');
+      var errorLinkElement = errorFileElement.querySelector('a');
 
       // Check if a file is selected
       if (!fileInput.files.length) {
-        errorMessageElement.textContent = 'Please select a file to upload.';
+        errorMessageElement.textContent = 'Chưa chọn file upload!';
         errorMessageElement.style.display = 'block';
         return false; // Prevent form submission
       } else {
@@ -71,20 +74,40 @@
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/excel/upload', true);
         xhr.onreadystatechange = function () {
-          if (xhr.readyState === 4 && xhr.status === 201) {
-            // Handle the response here (e.g., display a success message)
-            successMessage.textContent = 'Upload file thành công!';
-            successMessage.style.display = 'block';
+          if (xhr.readyState === 4) {
+            console.log(xhr);
 
-            setTimeout(() => {
-              successMessage.style.display = 'none';
-            }, 5000)
+            if (xhr.status === 201 || xhr.status === 200) {
+              const res = JSON.parse(xhr.response || "{}")
+              if (res?.errorLink) {
+                errorFileElement.style.display = 'block';
+                errorLinkElement.setAttribute('href', res.errorLink);
+              } else {
+                successMessage.textContent = 'Upload file thành công!';
+                successMessage.style.display = 'block';
+                errorFileElement.style.display = 'none';
 
-            fileInput.value = '';
-            formLoading.style.display = 'none';
-            form.style.display = 'block';
-          }
-        };
+                setTimeout(() => {
+                  successMessage.style.display = 'none';
+                }, 5000)
+              }
+
+              fileInput.value = '';
+              formLoading.style.display = 'none';
+              form.style.display = 'block';
+            } else {
+              console.error(xhr);
+
+              formLoading.style.display = 'none';
+              errorFileElement.style.display = 'none';
+              form.style.display = 'block';
+
+              errorMessageElement.textContent = 'Lỗi server!';
+              errorMessageElement.style.display = 'block';
+            }
+          };
+        }
+
         xhr.send(formData);
         return false; // Prevent form submission
       }
